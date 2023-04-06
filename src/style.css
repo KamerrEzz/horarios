@@ -1,0 +1,62 @@
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.p-3 {
+    padding: 1rem !important;
+}
+
+/* APP */
+
+input[type="time"] {
+    width: 80%;
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+button {
+    width: 20%;
+    padding: 1rem;
+    font-size: 1.5rem;
+    border: none;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.resultado {
+    margin-top: 1rem;
+}
+
+.resultado h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.resultado p {
+    margin-bottom: 0.5rem;
+}
+
+/* QUERY CONTAINER */
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 970px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+

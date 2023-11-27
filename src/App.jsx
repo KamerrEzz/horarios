@@ -1,77 +1,148 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment-timezone";
 import latam from "./latam.json";
-import image from './assets/msedge_B9gAMHN05M.gif'
+import image from "./assets/msedge_B9gAMHN05M.gif";
 
-import "./style.css";
+const CountrySelector = ({ countries, onSelect, onSelects }) => {
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+
+  const handleCountryChange = (event) => {
+    const selectedCountry = event.target.value;
+    setSelectedCountry(selectedCountry);
+    onSelect(selectedCountry);
+  };
+
+  return (
+    <select
+      className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full lg:w-fit"
+      id="country"
+      onChange={handleCountryChange}
+      value={selectedCountry}
+    >
+      {countries.map((country, index) => (
+        <option key={index} value={country.country_code}>
+          {country.name} {country.emoji}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+const CountryTime = ({ timezone, hour, localZone }) => {
+  let getCountry = latam.find((item) => item.country_code == timezone);
+  const timeFormat = "HH:mm";
+  let country = {};
+
+  getCountry.timezones.forEach((item) => {
+    const convertedTime = moment
+      .tz(hour, timeFormat, localZone)
+      .tz(item)
+      .format(timeFormat);
+
+    country[item] = {
+      country: item.split("/")[1],
+      hours: convertedTime,
+      emoji: getCountry.emoji,
+    };
+  });
+
+  country = Object.entries(country).map(([key, value]) => {
+    return `${value.hours} ${value.emoji} ${value.country}`;
+  });
+
+  if (!getCountry) return <></>;
+
+  return (
+    <div className="bg-portage-950/50 border border-portage-300 rounded-md mt-3 p-3">
+      <p className="text-barley-corn-200 text-xl font-bold py-2">
+        {getCountry.name}
+      </p>
+      <ul>
+        {country.map((item) => {
+          return <li className="text-portage-300">{item}</li>;
+        })}
+      </ul>
+    </div>
+  );
+};
 
 const App = () => {
   const [hour, setHour] = React.useState(0);
   const [localZone, setLocalZone] = React.useState("America/Lima");
-  const [text, setText] = React.useState();
+  const [Select, onSelect] = useState("ES");
+  const [Selects, onSelects] = useState([]);
 
-  function convertTimeToTimezones(time, inputTimezone, countries) {
-    const timeFormat = "HH:mm";
+  const addTime = () => {
+    onSelects((prevSelects) => {
+      const newSelects = [...prevSelects, Select];
+      return newSelects;
+    });
+  };
 
-    let result = {};
-    countries.forEach((country) => {
-      const { name, emoji, timezones } = country;
-      timezones.forEach((timezone) => {
-        const convertedTime = moment
-          .tz(time, timeFormat, inputTimezone)
-          .tz(timezone)
-          .format(timeFormat);
-        if (result[convertedTime]) {
-          result[convertedTime] += ` ${emoji}`;
-        } else {
-          result[convertedTime] = `${emoji}`;
-        }
-      });
-    });
-    result = Object.entries(result).map(([key, value]) => {
-      const emojis = value.split(" ");
-      const uniqueEmojis = [...new Set(emojis)];
-      return { key, value: uniqueEmojis.join(" ") };
-    });
-    return result;
-  }
   const getLocalTimezone = () => {
     const localTimezone = moment.tz.guess();
     setLocalZone(localTimezone);
   };
+
   useEffect(() => {
+    setHour(
+      `${new Date().getHours()}:${new Date()
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`
+    );
     getLocalTimezone();
   }, []);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const hours = e.target.hours.value;
-    setHour(hours);
-    const times = convertTimeToTimezones(hours, localZone, latam);
-    setText(times);
-  };
+
   return (
-    <div className="container p-3">
-      <h1>Convert Time</h1>
-      <p>Local Timezone: {localZone}</p>
-      <small>Precio el reloj</small>
-      <form onSubmit={handleSubmit}>
-        <input type="time" name="hours" id="hours" />
-        <button type="submit">Submit</button>
-      </form>
-
-      <div className="resultado">
-        {text && <h2>Result</h2>}
-        {text &&
-          text.map((item, index) => {
-            return (
-              <p key={index}>
-                {item.key} - {item.value}
-              </p>
-            );
-          })}
+    <div className="container m-auto p-10">
+      <div>
+        <h1 className="text-6xl font-montserrat font-extrabold text-portage-200">
+          Todos Juntos, Siempre a Tiempo
+        </h1>
+        <p className="text-barley-corn-400 mt-2">
+          Tu sistema esta en hora{" "}
+          <span className="font-semibold">{localZone}</span>
+        </p>
       </div>
-
-      <img src={image} alt="" />
+      <div className="mt-5">
+        <input
+          value={hour}
+          onChange={(res) => setHour(res.target.value)}
+          className="bg-portage-950/50 border text-xl border-portage-300 rounded-md py-1 px-3 text-white w-full"
+          type="time"
+          name="hours"
+          id="hours"
+        />
+      </div>
+      <div className="rounded-md flex flex-col md:flex-row justify-around items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
+        <label className="text-white w-fit" htmlFor="country">
+          Selecciona el pais{" "}
+        </label>
+        <CountrySelector
+          countries={latam}
+          onSelect={onSelect}
+          onSelects={onSelects}
+        />
+        <button
+          onClick={addTime}
+          className="w-full lg:w-fit rounded-md px-2 py-2 bg-portage-900 border border-portage-300 text-portage-300"
+        >
+          agregar
+        </button>
+      </div>
+      <div>
+        {Selects.map((item, index) => {
+          return (
+            <CountryTime
+              key={index}
+              hour={hour}
+              localZone={localZone}
+              timezone={item}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

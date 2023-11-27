@@ -1,8 +1,14 @@
 {
   "name": "horarios",
+  "description": "Cuando trabajas y colaboras en internet, el coordinar las horas es algo complicado, por este motivo, he creado esta app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "email": "dev@kamerrezz.com",
+    "name": "Kamerr Ezz",
+    "url": "https://kamerrezz.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -22,6 +28,9 @@
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
     "vite": "^3.2.3"
   },
   "homepage": "https://kamerrezz.github.io/horarios/"

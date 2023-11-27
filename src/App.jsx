@@ -14,7 +14,7 @@ const CountrySelector = ({ countries, onSelect, onSelects }) => {
 
   return (
     <select
-      className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full lg:w-fit"
+      className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full lg:w-fit outline-none"
       id="country"
       onChange={handleCountryChange}
       value={selectedCountry}
@@ -58,8 +58,12 @@ const CountryTime = ({ timezone, hour, localZone }) => {
         {getCountry.name}
       </p>
       <ul>
-        {country.map((item) => {
-          return <li className="text-portage-300">{item}</li>;
+        {country.map((item, index) => {
+          return (
+            <li key={index} className="text-portage-300">
+              {item}
+            </li>
+          );
         })}
       </ul>
     </div>
@@ -86,7 +90,7 @@ const App = () => {
 
   useEffect(() => {
     setHour(
-      `${new Date().getHours()}:${new Date()
+      `${new Date().getHours().toString().padStart(2, "0")}:${new Date()
         .getMinutes()
         .toString()
         .padStart(2, "0")}`
@@ -105,7 +109,7 @@ const App = () => {
           <span className="font-semibold">{localZone}</span>
         </p>
       </div>
-      <div className="mt-5">
+      <div className="mt-5 ">
         <input
           value={hour}
           onChange={(res) => setHour(res.target.value)}
@@ -115,9 +119,35 @@ const App = () => {
           id="hours"
         />
       </div>
-      <div className="rounded-md flex flex-col md:flex-row justify-around items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
+      <div className="rounded-md w-full flex flex-col md:flex-row  items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
+        <label className="text-white w-64" htmlFor="localzone">
+          Mi origen{" "}
+        </label>
+        <select
+          className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full  outline-none"
+          value={localZone}
+          onChange={(r) => setLocalZone(r.target.value)}
+          name="localzone"
+          id="localzone"
+        >
+          {latam.map((localnames, indexlocal) => {
+            return (
+              <optgroup
+                key={indexlocal}
+                label={`${localnames.name} ${localnames.emoji}`}
+              >
+                {localnames.timezones.map((timezones, indexzones) => {
+                  return <option key={indexzones}>{timezones}</option>;
+                })}
+              </optgroup>
+            );
+          })}
+        </select>
+      </div>
+
+      <div className="rounded-md flex flex-col md:flex-row justify-between items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
         <label className="text-white w-fit" htmlFor="country">
-          Selecciona el pais{" "}
+          Donde quiero{" "}
         </label>
         <CountrySelector
           countries={latam}

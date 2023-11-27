@@ -120,7 +120,7 @@ const App = () => {
         />
       </div>
       <div className="rounded-md w-full flex flex-col md:flex-row  items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
-        <label className="text-white w-64" htmlFor="localzone">
+        <label className="text-white lg:w-64" htmlFor="localzone">
           Mi origen{" "}
         </label>
         <select

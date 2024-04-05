@@ -1,62 +1,24 @@
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: #14161c;
+  cursor: pointer;
 }
 
-.p-3 {
-    padding: 1rem !important;
+select {
+  /* for Firefox */
+  -moz-appearance: none;
+  /* for Chrome */
+  -webkit-appearance: none;
 }
 
-/* APP */
-
-input[type="time"] {
-    width: 80%;
-    padding: 1rem;
-    font-size: 1rem;
+/* For IE10 */
+select::-ms-expand {
+  display: none;
 }
 
-button {
-    width: 20%;
-    padding: 1rem;
-    font-size: 1.5rem;
-    border: none;
-    background: #333;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 10px;
+* {
+  scrollbar-color: #1c1f27 #ffffff00;
 }
 
-.resultado {
-    margin-top: 1rem;
+select::-webkit-scrollbar {
+  background: transparent;  
 }
-
-.resultado h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.resultado p {
-    margin-bottom: 0.5rem;
-}
-
-/* QUERY CONTAINER */
-@media (min-width: 768px) {
-    .container {
-        width: 750px;
-    }
-}
-
-@media (min-width: 992px) {
-    .container {
-        width: 970px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        width: 1170px;
-    }
-}
-

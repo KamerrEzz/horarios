@@ -1,91 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment from "moment-timezone";
+import { FaClock, FaDiscord, FaLocationDot, FaTwitter } from "react-icons/fa6";
+
 import latam from "./latam.json";
-import image from "./assets/msedge_B9gAMHN05M.gif";
+import { FaGithub, FaLocationArrow } from "react-icons/fa";
+import { Select } from "./Components/Select";
+import { MdAddBox } from "react-icons/md";
+import { EmojiTime } from "./Components/EmojiTime";
+import { TbWorld } from "react-icons/tb";
 
-const CountrySelector = ({ countries, onSelect, onSelects }) => {
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-
-  const handleCountryChange = (event) => {
-    const selectedCountry = event.target.value;
-    setSelectedCountry(selectedCountry);
-    onSelect(selectedCountry);
-  };
-
-  return (
-    <select
-      className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full lg:w-fit outline-none"
-      id="country"
-      onChange={handleCountryChange}
-      value={selectedCountry}
-    >
-      {countries.map((country, index) => (
-        <option key={index} value={country.country_code}>
-          {country.name} {country.emoji}
-        </option>
-      ))}
-    </select>
-  );
+const findEmojiForTimezone = (timezone) => {
+  for (let country of latam) {
+    if (country.timezones.includes(timezone)) {
+      return `${country.emoji}`;
+    }
+  }
+  return "x";
 };
-
-const CountryTime = ({ timezone, hour, localZone }) => {
-  let getCountry = latam.find((item) => item.country_code == timezone);
-  const timeFormat = "HH:mm";
-  let country = {};
-
-  getCountry.timezones.forEach((item) => {
-    const convertedTime = moment
-      .tz(hour, timeFormat, localZone)
-      .tz(item)
-      .format(timeFormat);
-
-    country[item] = {
-      country: item.split("/")[1],
-      hours: convertedTime,
-      emoji: getCountry.emoji,
-    };
-  });
-
-  country = Object.entries(country).map(([key, value]) => {
-    return `${value.hours} ${value.emoji} ${value.country}`;
-  });
-
-  if (!getCountry) return <></>;
-
-  return (
-    <div className="bg-portage-950/50 border border-portage-300 rounded-md mt-3 p-3">
-      <p className="text-barley-corn-200 text-xl font-bold py-2">
-        {getCountry.name}
-      </p>
-      <ul>
-        {country.map((item, index) => {
-          return (
-            <li key={index} className="text-portage-300">
-              {item}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+const findZoneForTimezone = (timezone) => {
+  for (let country of latam) {
+    if (country.timezones.includes(timezone)) {
+      return timezone.split("/")[timezone.split("/").length - 1];
+    }
+  }
+  return "x";
 };
 
 const App = () => {
-  const [hour, setHour] = React.useState(0);
-  const [localZone, setLocalZone] = React.useState("America/Lima");
-  const [Select, onSelect] = useState("ES");
-  const [Selects, onSelects] = useState([]);
+  const [localSys, setLocalSys] = useState("America/Lima");
+  const [localZone, setLocalZone] = useState("America/Lima");
+  const [toZone, settoZone] = useState("America/Lima");
+  const [times, settimes] = useState({});
+  const [names, setnames] = useState({});
+  const [hour, setHour] = useState(0);
 
-  const addTime = () => {
-    onSelects((prevSelects) => {
-      const newSelects = [...prevSelects, Select];
-      return newSelects;
-    });
-  };
+  const inputTime = useRef();
 
   const getLocalTimezone = () => {
     const localTimezone = moment.tz.guess();
+    setLocalSys(localTimezone);
     setLocalZone(localTimezone);
+  };
+
+  const ConvertTime = () => {
+    const convertedTime = moment
+      .tz(hour, "HH:mm", localZone)
+      .tz(toZone)
+      .format("HH:mm");
+
+    const emojiZone = findEmojiForTimezone(toZone);
+    const nameZone = findZoneForTimezone(toZone);
+
+    let timesEmoji = { ...times };
+    if (timesEmoji[convertedTime]) timesEmoji[convertedTime].push(emojiZone);
+    else timesEmoji[convertedTime] = [emojiZone];
+    settimes(timesEmoji);
+
+    let timesname = { ...names };
+    if (timesname[convertedTime]) timesname[convertedTime].push(nameZone);
+    else timesname[convertedTime] = [nameZone];
+    setnames(timesname);
+
+    console.log(convertedTime, nameZone, timesEmoji);
   };
 
   useEffect(() => {
@@ -99,81 +75,67 @@ const App = () => {
   }, []);
 
   return (
-    <div className="container m-auto p-10">
-      <div>
-        <h1 className="text-6xl font-montserrat font-extrabold text-portage-200">
+    <main className="max-w-5xl m-auto py-4 px-4 lg:px-0 flex flex-col gap-5">
+      <header className="text-white">
+        <h1 className="font-extrabold text-white text-4xl">
           Todos Juntos, Siempre a Tiempo
         </h1>
-        <p className="text-barley-corn-400 mt-2">
+        <h2 className="font-thin text-sm" >Cuando uno vive, come y respira en internet, coordinar horarios suele ser complicado, ahora no tendras escusa</h2>
+        <h3 className="font-thin text-sm">
           Tu sistema esta en hora{" "}
-          <span className="font-semibold">{localZone}</span>
-        </p>
-      </div>
-      <div className="mt-5 ">
-        <input
-          value={hour}
-          onChange={(res) => setHour(res.target.value)}
-          className="bg-portage-950/50 border text-xl border-portage-300 rounded-md py-1 px-3 text-white w-full"
-          type="time"
-          name="hours"
-          id="hours"
-        />
-      </div>
-      <div className="rounded-md w-full flex flex-col md:flex-row  items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
-        <label className="text-white lg:w-64" htmlFor="localzone">
-          Mi origen{" "}
-        </label>
-        <select
-          className="bg-portage-900 border border-portage-300 text-white px-2 py-1 rounded-md w-full  outline-none"
-          value={localZone}
-          onChange={(r) => setLocalZone(r.target.value)}
-          name="localzone"
-          id="localzone"
+          <span className="text-[#6B97CA]">{localSys}</span>
+        </h3>
+      </header>
+      <section className="flex gap-5 items-center h-10">
+        <button
+          onClick={() => inputTime.current.showPicker()}
+          className="bg-[#14161C] px-4 py-2 rounded-md text-white flex gap-3 w-fit items-center cursor-pointer"
         >
-          {latam.map((localnames, indexlocal) => {
-            return (
-              <optgroup
-                key={indexlocal}
-                label={`${localnames.name} ${localnames.emoji}`}
-              >
-                {localnames.timezones.map((timezones, indexzones) => {
-                  return <option key={indexzones}>{timezones}</option>;
-                })}
-              </optgroup>
-            );
-          })}
-        </select>
-      </div>
-
-      <div className="rounded-md flex flex-col md:flex-row justify-between items-center gap-3 mt-5 bg-portage-950/50 border border-portage-300 p-3">
-        <label className="text-white w-fit" htmlFor="country">
-          Donde quiero{" "}
-        </label>
-        <CountrySelector
-          countries={latam}
-          onSelect={onSelect}
-          onSelects={onSelects}
+          <FaClock />
+          <input
+            ref={inputTime}
+            value={hour}
+            onChange={(res) => setHour(res.target.value)}
+            className="bg-transparent outline-none cursor-pointer"
+            type="time"
+            name="hours"
+            id="hours"
+          />
+        </button>
+        <Select
+          value={localZone}
+          latam={latam}
+          setLocalZone={setLocalZone}
+          Icon={FaLocationDot}
+        />
+        <Select
+          value={toZone}
+          latam={latam}
+          setLocalZone={settoZone}
+          Icon={FaLocationArrow}
         />
         <button
-          onClick={addTime}
-          className="w-full lg:w-fit rounded-md px-2 py-2 bg-portage-900 border border-portage-300 text-portage-300"
+          onClick={ConvertTime}
+          className="bg-[#28328A] px-4 py-2 h-10 rounded-md text-white flex items-center gap-2 justify-between"
         >
-          agregar
+          <MdAddBox />
+          <span className="w-full">Agregar horario</span>
         </button>
-      </div>
-      <div>
-        {Selects.map((item, index) => {
-          return (
-            <CountryTime
-              key={index}
-              hour={hour}
-              localZone={localZone}
-              timezone={item}
-            />
-          );
-        })}
-      </div>
-    </div>
+      </section>
+      <section className="bg-[#1E2128] p-3 border border-white/20 rounded-md">
+        <h1 className="text-white mb-2 font-bold">Formato en emojis</h1>
+        <EmojiTime objeto={times} />
+        <div className="border border-white/10 my-4"></div>
+        <h1 className="text-white my-4 font-bold">Formato en nombres</h1>
+        <EmojiTime objeto={names} />
+      </section>
+      <section className="text-white/50 flex gap-2 items-center">
+        <FaTwitter className="cursor-pointer hover:text-white" onClick={() => window.location.href = "https://twitter.com/kamerrezz"}/>
+        <FaGithub className="cursor-pointer hover:text-white" onClick={() => window.location.href = "https://github.com/kamerrezz"}/>
+        <FaDiscord className="cursor-pointer hover:text-white" onClick={() => window.location.href = "https://zeew.space/discord"}/>
+        <TbWorld className="cursor-pointer hover:text-white" onClick={() => window.location.href = "https://kamerrezz.com"}/>
+      </section>
+    </main>
   );
 };
 

@@ -6,9 +6,11 @@ Es por ello que he desarrollado una pequeña aplicación que facilita la visuali
 
 Con esta herramienta, buscamos garantizar que todos estemos sincronizados y podamos trabajar juntos, superando las barreras del espacio y del tiempo. ¡Nuestro lema es "Todos Juntos, Siempre a Tiempo"!
 
+* Version actual: 3 
+* [Version 2](https://kamerrezz.github.io/horarios/v2.jpg)
+* [Version 1](https://kamerrezz.github.io/horarios/v1.gif)
+
 
 <div align="center">
-  <img src="./public/image.png">
-  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+  <img src="./public/v3.png">
 </div>

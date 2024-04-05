@@ -8,7 +8,7 @@ Con esta herramienta, buscamos garantizar que todos estemos sincronizados y poda
 
 
 <div align="center">
-  <img src="./.github/assets/wallpaper.jpg">
+  <img src="./public/image.png">
   <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 </div>
